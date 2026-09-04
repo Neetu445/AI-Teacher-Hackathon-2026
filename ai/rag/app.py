@@ -66,7 +66,7 @@ def generate_grounded_answer(query: str, contexts: list[str], similarities: list
     Now page-aware: cites source page numbers.
     """
     if not contexts:
-        return "Ye is material me nahi hai."
+        return "Not found in the provided material."
 
     # Optional Gemini grounded answer if key present
     gemini_key = os.getenv("GEMINI_API_KEY")
@@ -84,7 +84,7 @@ def generate_grounded_answer(query: str, contexts: list[str], similarities: list
                 ctx_parts.append(f"{label}\n{c}")
             ctx = "\n\n---\n\n".join(ctx_parts)
             prompt = f"""You are a strict RAG assistant. Answer ONLY from the given context.
-If answer not in context, reply exactly: "Ye is material me nahi hai."
+If answer not in context, reply exactly: "Not found in the provided material."
 For every fact, cite page like [Source: <file> - Page <n>].
 Context:\n{ctx}\n\nQuestion: {query}\nAnswer in same language as question, grounded and concise."""
             resp = model.generate_content(prompt)
@@ -108,7 +108,7 @@ Context:\n{ctx}\n\nQuestion: {query}\nAnswer in same language as question, groun
         # build filtered with original indices to preserve page cites
         filtered_idx = [(i, c, s) for i, (c, s) in enumerate(zip(contexts, similarities)) if s >= threshold]
         if not filtered_idx:
-            return "Ye is material me nahi hai. (No relevant passage found - similarity too low [threshold {:.2f}, OCR={}], try rephrasing. Best match was {:.2f})".format(threshold, any(m.get("ocr_used") for m in metadatas) if metadatas else False, max(similarities) if similarities else 0)
+            return "Not found in the provided material. (No relevant passage found - similarity too low [threshold {:.2f}, OCR={}], try rephrasing. Best match was {:.2f})".format(threshold, any(m.get("ocr_used") for m in metadatas) if metadatas else False, max(similarities) if similarities else 0)
         # Full question vs keyword: full question gets synthesized multi-passage answer
         is_full_q = len(query.split()) >= 3 or "?" in query or query.lower().startswith(("what","how","why","explain","describe","when","where","list"))
         if is_full_q and len(filtered_idx) > 1:
@@ -262,12 +262,12 @@ async def query_material(request: Request, query: Optional[str] = Form(None), to
     sims = result.get("similarities", [])
 
     if not docs:
-        return {"query": query, "answer": "Ye is material me nahi hai.", "contexts": [], "similarities": []}
+        return {"query": query, "answer": "Not found in the provided material.", "contexts": [], "similarities": []}
 
     # For non-generic queries, check best similarity threshold here before generating answer (adaptive)
     adaptive_thr = _get_adaptive_threshold(result["metadatas"])
     if sims and not _is_generic_query(query) and max(sims) < adaptive_thr:
-        return {"query": query, "answer": "Ye is material me nahi hai. (No passage crosses relevance threshold {:.2f} [OCR={}] - best was {:.2f}. Try different wording or check if topic is in document.)".format(adaptive_thr, any(m.get("ocr_used") for m in result["metadatas"]), max(sims)), "contexts": docs, "metadatas": result["metadatas"], "distances": result["distances"], "similarities": sims}
+        return {"query": query, "answer": "Not found in the provided material. (No passage crosses relevance threshold {:.2f} [OCR={}] - best was {:.2f}. Try different wording or check if topic is in document.)".format(adaptive_thr, any(m.get("ocr_used") for m in result["metadatas"]), max(sims)), "contexts": docs, "metadatas": result["metadatas"], "distances": result["distances"], "similarities": sims}
 
     answer = generate_grounded_answer(query, docs, similarities=sims, metadatas=result["metadatas"])
 
