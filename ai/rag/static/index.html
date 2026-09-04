@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAG Service</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>body{font-family:'Inter',sans-serif}</style>
+</head>
+<body class="bg-[#0f172a] text-white min-h-screen">
+<!-- Header -->
+<header class="border-b border-slate-800 sticky top-0 bg-[#0f172a]/90 backdrop-blur z-10">
+  <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-500 flex items-center justify-center font-extrabold">R</div>
+      <div>
+        <div class="font-extrabold leading-none">RAG Service</div>
+        <div class="text-xs text-slate-400">Grounded Answers</div>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="text-xs bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full border border-emerald-500/30">● Live</span>
+      <a href="/docs" class="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-full">API Docs</a>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-6xl mx-auto px-6 py-8 grid lg:grid-cols-2 gap-6">
+  <!-- Left: Upload -->
+  <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-6">
+    <h2 class="font-bold text-lg flex items-center gap-2">📄 Upload Material</h2>
+    <p class="text-sm text-slate-400 mt-1">PDF, PPTX, TXT supported</p>
+    
+    <label id="drop" class="mt-5 border-2 border-dashed border-slate-600 hover:border-violet-500 rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer bg-slate-900/50 transition">
+      <div class="w-12 h-12 rounded-full bg-violet-500/20 flex items-center justify-center text-xl">⬆</div>
+      <div class="mt-3 font-semibold text-sm">Drag & drop or click to upload</div>
+      <div class="text-xs text-slate-400">PDF, PPTX, TXT</div>
+      <input id="file" type="file" accept=".pdf,.pptx,.txt,.md" class="hidden">
+    </label>
+
+    <div id="uploadStatus" class="mt-4 text-sm"></div>
+    
+    <div class="mt-6 flex gap-2">
+      <button onclick="clearStore()" class="text-xs bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-full">Clear Store</button>
+      <span id="storeInfo" class="text-xs text-slate-400 py-2"></span>
+    </div>
+
+
+  </div>
+
+  <!-- Right: Query -->
+  <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-6 flex flex-col">
+    <h2 class="font-bold text-lg">💬 Ask from Document</h2>
+    <p class="text-sm text-slate-400 mt-1">Grounded answer • Top passages cited</p>
+
+    <div class="mt-5 flex gap-2">
+      <input id="query" placeholder="Ask a question from your document..." class="flex-1 bg-slate-900 border border-slate-700 rounded-full px-4 py-2.5 text-sm outline-none focus:border-violet-500" onkeydown="if(event.key==='Enter') ask()">
+      <button onclick="ask()" class="bg-violet-600 hover:bg-violet-500 px-6 py-2.5 rounded-full text-sm font-semibold">Ask</button>
+    </div>
+
+    <div class="mt-3 flex flex-wrap gap-2">
+      <button onclick="setQ('What is the main topic of the document?')" class="text-xs bg-slate-900 border border-slate-700 hover:border-violet-500 px-3 py-1 rounded-full">Main topic?</button>
+      <button onclick="setQ('Summarize the document')" class="text-xs bg-slate-900 border border-slate-700 hover:border-violet-500 px-3 py-1 rounded-full">Summarize</button>
+      <button onclick="setQ('List key points')" class="text-xs bg-slate-900 border border-slate-700 hover:border-violet-500 px-3 py-1 rounded-full">Key points</button>
+    </div>
+
+    <div id="answer" class="mt-6 flex-1 bg-slate-900 border border-slate-700 rounded-xl p-4 min-h-[220px]">
+      <div class="text-sm text-slate-400">Upload ke baad yaha grounded answer ayega...</div>
+    </div>
+
+    <div id="contexts" class="mt-4 space-y-2"></div>
+  </div>
+</main>
+
+<footer class="max-w-6xl mx-auto px-6 pb-8 text-center text-xs text-slate-500">
+  Hackathon • RAG / Material Processing → upload → extract → chunk → retrieve → ground answers
+</footer>
+
+<script>
+const fileInput = document.getElementById('file');
+const drop = document.getElementById('drop');
+const statusEl = document.getElementById('uploadStatus');
+const answerEl = document.getElementById('answer');
+const contextsEl = document.getElementById('contexts');
+
+drop.addEventListener('click', ()=> fileInput.click());
+drop.addEventListener('dragover', e=>{e.preventDefault(); drop.classList.add('border-violet-500')});
+drop.addEventListener('dragleave', ()=> drop.classList.remove('border-violet-500'));
+drop.addEventListener('drop', e=>{e.preventDefault(); fileInput.files=e.dataTransfer.files; upload()});
+fileInput.addEventListener('change', upload);
+
+async function upload(){
+  const f=fileInput.files[0];
+  if(!f) return;
+  const isScanned = f.size > 500000; // hint
+  statusEl.innerHTML=`<span class="text-violet-300">⏳ Uploading ${f.name}... ${isScanned ? '(scanned PDF - 30s OCR, please wait)' : ''}</span>`;
+  const fd=new FormData(); fd.append('file', f);
+  try{
+    const controller = new AbortController();
+    const timeout = setTimeout(()=> controller.abort(), 90000); // 90s for OCR
+    const r=await fetch('/upload',{method:'POST',body:fd, signal: controller.signal});
+    clearTimeout(timeout);
+    const j=await r.json();
+    if(j.error){ statusEl.innerHTML=`<span class="text-amber-300">${j.error}</span>`; return;}
+    statusEl.innerHTML=`<span class="text-emerald-300">✓ ${j.message} • ${j.chars} chars • ${j.chunks} chunks</span>`;
+    document.getElementById('storeInfo').textContent=`Indexed: ${j.filename}`;
+  }catch(e){
+    if(e.name==='AbortError') statusEl.innerHTML=`<span class="text-amber-300">⏳ Still processing scanned PDF... please wait 20s and check query. If persists, use text-based PDF (instant).</span>`;
+    else statusEl.innerHTML=`<span class="text-red-400">Upload failed: ${e.message}. For scanned PDF, wait 40s and try Ask. Text PDF/PPTX is instant.</span>`;
+  }
+}
+
+function setQ(q){ document.getElementById('query').value=q; ask(); }
+
+async function ask(){
+  const q=document.getElementById('query').value.trim();
+  if(!q) return;
+  answerEl.innerHTML=`<div class="text-sm text-violet-300">Searching grounded passages...</div>`;
+  contextsEl.innerHTML='';
+  const fd=new FormData(); fd.append('query', q); fd.append('top_k','4');
+  try{
+    const r=await fetch('/query',{method:'POST',body:fd});
+    const j=await r.json();
+    const isNotFound = j.answer.includes("Ye is material me nahi hai");
+    const sims = j.similarities || [];
+    const badge = isNotFound ? `<div class="text-xs text-amber-300 mb-2">● Not found • best sim ${sims.length? Math.max(...sims).toFixed(2):'0.00'}</div>` : `<div class="text-xs text-emerald-300 mb-2">● Grounded • ${j.contexts.length} passages${sims.length?' • top sim '+sims[0].toFixed(2):''}</div>`;
+    answerEl.innerHTML=badge+`<div class="text-sm leading-relaxed whitespace-pre-wrap">${escapeHtml(j.answer)}</div>`;
+    contextsEl.innerHTML=j.contexts.map((c,i)=>{
+      const sim = sims[i]!==undefined ? ` • sim ${sims[i].toFixed(2)}` : '';
+      const low = sims[i]!==undefined && sims[i] < 0.35 ? 'border-amber-500/30' : 'border-slate-700';
+      return `<div class="bg-slate-900 border ${low} rounded-xl p-3"><div class="text-xs text-slate-400 mb-1">Passage ${i+1}${sim}</div><div class="text-xs text-slate-300 leading-relaxed">${escapeHtml(c.slice(0,400))}...</div></div>`
+    }).join('');
+  }catch(e){ answerEl.innerHTML=`<div class="text-sm text-red-400">Query failed</div>`}
+}
+
+async function clearStore(){
+  await fetch('/clear',{method:'POST'});
+  statusEl.innerHTML=`<span class="text-slate-400">Store cleared</span>`;
+  answerEl.innerHTML=`<div class="text-sm text-slate-400">Store cleared • Upload again</div>`;
+  contextsEl.innerHTML='';
+}
+
+function escapeHtml(s){return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')}
+</script>
+</body>
+</html>

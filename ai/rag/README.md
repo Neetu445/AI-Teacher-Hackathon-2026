@@ -1,0 +1,50 @@
+# RAG Service - Hackathon Starter (Free)
+
+Modular RAG for PS: `upload -> extract -> chunk -> retrieve -> ground answers`
+
+## Stack (100% free for prototype)
+- FastAPI + NumPy/Pickle local vector store + SentenceTransformers `all-MiniLM-L6-v2` (no API key needed, Gemini optional)
+
+## Setup
+```bash
+cd "Rag Services"
+python -m venv venv
+# Windows
+venv\Scripts\activate
+pip install -r requirements.txt
+copy .env.example .env
+# add GEMINI_API_KEY in .env (optional - fallback works without it)
+uvicorn app:app --reload --port 8000
+```
+
+## APIs
+- `GET /` - web UI (static/index.html)
+- `GET /health` - health + indexed_chunks
+- `GET /web` - web UI alt
+- `POST /upload` - form-data `file` (.pdf/.pptx/.txt/.md) -> chunks + index
+  - PDF response: `{"filename","chars","chunks","pages","ocr_used","threshold_hint","message"}` (`pages` = source PDF page count, `ocr_used` = true if scanned+OCR fallback used, `threshold_hint` = 0.20 for OCR / 0.35 for clean text)
+  - PPTX/TXT/MD response: `{"filename","chars","chunks","message"}` (no `pages` field, `ocr_used` always false)
+- `POST /query` - form-data `query`, `top_k` -> grounded answer + contexts
+  - `metadatas[i].page: number | null` — PDF/TXT/MD = `1..N` (TXT/MD always `1`), PPTX/edge = `null` (JSON null). Frontend must guard: `if (m.page != null) show Page ${m.page}` else `Page N/A`. Allows page gaps if blank/image-only PDF pages were skipped.
+  - `metadatas[i].ocr_used: boolean` — true if that chunk came from OCR (noisy). Query uses adaptive threshold: `0.35` for clean text, `0.20` for OCR (auto-detected from retrieved chunks). Avoids false negatives on scanned docs vs false positives on clean docs.
+  - Threshold failure: `Ye is material me nahi hai. (No passage crosses 0.20 [OCR=true] - best was 0.05)`
+- `POST /clear` - clear vector store
+
+## Test
+```bash
+# upload
+curl -F "file=@sample.pdf" http://localhost:8000/upload
+# query
+curl -F "query=What is photosynthesis?" http://localhost:8000/query
+```
+
+## Frontend / Team Integration
+Team just needs to call your APIs. No need to share DB. Keep this repo separate and give them `http://localhost:8000` URL.
+
+## Strict RAG Prompt
+Answers are grounded. If not in material -> "Ye is material me nahi hai."
+
+## Known Limitations (Hackathon Scope)
+- **Topically-adjacent false positive (embedding limitation):** On clean text PDFs, semantically related out-of-material queries can score above `0.35` (e.g., `HAP UNIT - 1.pdf`: `What is photosynthesis?` -> sim `0.37` vs `blockchain: 0.15`, `quantum: 0.15`). System may return a related passage (respiration/metabolism) as "grounded" even when topic is not literally in document. This is inherent to `all-MiniLM-L6-v2` cosine similarity — related bio vocab clusters. Mitigation if needed: optional Gemini LLM check `does this passage actually answer the question?` (only if `GEMINI_API_KEY` set), or raise threshold to `0.40` for strict domains. Documented, not patched, to avoid overfitting small test set.
+- **Vague queries on OCR docs:** `List the domains` (no keywords) sim `0.198` < `0.20` -> correctly returns `Ye is material me nahi hai`, while specific `What domains does DeciXAI cover - career finance startup policy` sim `0.44` -> passes. Vague phrasing on noisy OCR text may need rephrase — expected behavior, threshold kept at `0.20` (not lowered to `0.18`) to avoid overfitting.
+- **OCR noise:** Scanned PDFs use `ocr_used=true` (9/10 pages in synopsis, page 5 blank skipped) -> lower threshold `0.20` compensates but cannot fully recover garbled text (`[rst arc as mmportant`). Clean PDFs stay at `0.35` for precision.

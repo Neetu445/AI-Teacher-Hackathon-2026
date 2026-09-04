@@ -1,0 +1,16 @@
+fastapi==0.110.0
+uvicorn==0.29.0
+sentence-transformers==2.6.1
+pypdf==4.2.0
+python-pptx==0.6.21
+python-multipart==0.0.9
+python-dotenv==1.0.1
+numpy>=1.24
+scikit-learn>=1.3
+# OCR deps for scanned PDFs (optional but needed for scan fallback)
+PyMuPDF>=1.23
+easyocr>=1.7
+opencv-python-headless>=4.8
+pillow>=10.0
+# Optional: for Gemini grounded answers (if GEMINI_API_KEY set)
+# google-generativeai>=0.5
