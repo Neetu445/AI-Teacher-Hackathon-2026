@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@google/genai": "^2.21.0",
+    "@google/generative-ai": "^0.24.1",
+    "dotenv": "^17.4.2",
+    "pdf-parse": "^1.1.1"
+  }
+}
