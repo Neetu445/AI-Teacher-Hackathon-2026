@@ -1,0 +1,508 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Teacher - Assessment</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f5f7fb;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .box {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input, select, button, textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px;
+      margin-top: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      margin-top: 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .question {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+
+    .question label {
+      font-weight: normal;
+    }
+
+    .result {
+      margin-top: 15px;
+      padding: 15px;
+      background: #f0f4ff;
+      border-radius: 8px;
+    }
+
+    .loading {
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .error {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>🤖 AI Teacher Assessment</h1>
+
+  <!-- STEP 1 -->
+  <div class="box">
+    <h2>📄 Upload Study Material</h2>
+
+    <label>Select PDF</label>
+    <input type="file" id="pdfFile" accept=".pdf">
+
+    <label>Student Level</label>
+    <select id="level">
+      <option value="beginner">Beginner</option>
+      <option value="intermediate">Intermediate</option>
+      <option value="advanced">Advanced</option>
+    </select>
+
+    <label>Number of Questions</label>
+    <select id="numberOfQuestions">
+      <option value="3">3</option>
+      <option value="5" selected>5</option>
+      <option value="10">10</option>
+    </select>
+
+    <button onclick="generateQuiz()">Generate Quiz</button>
+
+    <p id="quizStatus"></p>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="box" id="quizBox" style="display:none;">
+    <h2>📝 Your Quiz</h2>
+
+    <div id="questionsContainer"></div>
+
+    <button onclick="submitQuiz()">Submit Answers</button>
+
+    <p id="evaluationStatus"></p>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="box" id="resultBox" style="display:none;">
+    <h2>📊 Your Performance</h2>
+
+    <div id="score"></div>
+
+    <h3>💪 Strong Areas</h3>
+    <ul id="strongAreas"></ul>
+
+    <h3>📚 Weak Areas</h3>
+    <ul id="weakAreas"></ul>
+
+    <h3>💡 Recommendations</h3>
+    <ul id="recommendations"></ul>
+
+    <h3>🔄 Revision Topics</h3>
+    <ul id="revisionTopics"></ul>
+
+    <h3>➡️ Next Step</h3>
+    <p id="nextStep"></p>
+
+    <h3>🔁 Re-test Concepts</h3>
+    <ul id="retestConcepts"></ul>
+  </div>
+
+
+<script>
+
+  const API_URL = "http://localhost:3000";
+
+  let currentQuiz = null;
+
+
+  // =====================================================
+  // STEP 1 - GENERATE QUIZ
+  // =====================================================
+
+  async function generateQuiz() {
+
+    const fileInput = document.getElementById("pdfFile");
+    const level = document.getElementById("level").value;
+    const numberOfQuestions =
+      document.getElementById("numberOfQuestions").value;
+
+    const status = document.getElementById("quizStatus");
+
+    if (!fileInput.files.length) {
+      status.innerHTML =
+        '<span class="error">Please select a PDF.</span>';
+      return;
+    }
+
+    const file = fileInput.files[0];
+
+    if (file.type !== "application/pdf") {
+      status.innerHTML =
+        '<span class="error">Only PDF files are allowed.</span>';
+      return;
+    }
+
+    const formData = new FormData();
+
+    formData.append("document", file);
+    formData.append("level", level);
+    formData.append("numberOfQuestions", numberOfQuestions);
+
+    status.innerHTML =
+      '<span class="loading">⏳ Reading PDF and generating quiz...</span>';
+
+    try {
+
+      const response = await fetch(
+        `${API_URL}/generate-quiz`,
+        {
+          method: "POST",
+          body: formData
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Quiz generation failed");
+      }
+
+      currentQuiz = data.quiz;
+
+      displayQuiz(currentQuiz);
+
+      status.innerHTML =
+        "✅ Quiz generated successfully!";
+
+    } catch (error) {
+
+      console.error(error);
+
+      status.innerHTML =
+        `<span class="error">❌ ${error.message}</span>`;
+    }
+  }
+
+
+  // =====================================================
+  // DISPLAY QUIZ
+  // =====================================================
+
+  function displayQuiz(quiz) {
+
+    const container =
+      document.getElementById("questionsContainer");
+
+    container.innerHTML = "";
+
+    quiz.questions.forEach((q, index) => {
+
+      const questionDiv =
+        document.createElement("div");
+
+      questionDiv.className = "question";
+
+      let html = `
+        <h3>Q${index + 1}. ${q.question}</h3>
+        <p><b>Concept:</b> ${q.concept}</p>
+      `;
+
+
+      // MCQ
+      if (q.type === "MCQ") {
+
+        q.options.forEach((option, optionIndex) => {
+
+          html += `
+            <label>
+              <input
+                type="radio"
+                name="question${index}"
+                value="${escapeHtml(option)}"
+              >
+              ${escapeHtml(option)}
+            </label>
+          `;
+
+        });
+
+      }
+
+      // Short Answer
+      else {
+
+        html += `
+          <textarea
+            id="answer${index}"
+            rows="4"
+            placeholder="Write your answer here..."
+          ></textarea>
+        `;
+
+      }
+
+      questionDiv.innerHTML = html;
+
+      container.appendChild(questionDiv);
+
+    });
+
+    document.getElementById("quizBox").style.display = "block";
+
+    window.scrollTo({
+      top: document.getElementById("quizBox").offsetTop,
+      behavior: "smooth"
+    });
+  }
+
+
+  // =====================================================
+  // STEP 2 - SUBMIT ANSWERS
+  // =====================================================
+
+  async function submitQuiz() {
+
+    if (!currentQuiz) {
+      alert("Quiz not found.");
+      return;
+    }
+
+    const answers = [];
+
+    currentQuiz.questions.forEach((q, index) => {
+
+      let answer = "";
+
+      if (q.type === "MCQ") {
+
+        const selected =
+          document.querySelector(
+            `input[name="question${index}"]:checked`
+          );
+
+        if (selected) {
+          answer = selected.value;
+        }
+
+      } else {
+
+        const textarea =
+          document.getElementById(`answer${index}`);
+
+        if (textarea) {
+          answer = textarea.value;
+        }
+
+      }
+
+      answers.push({
+        answer: answer
+      });
+
+    });
+
+
+    const status =
+      document.getElementById("evaluationStatus");
+
+    status.innerHTML =
+      '<span class="loading">⏳ Evaluating your answers...</span>';
+
+
+    try {
+
+      const response = await fetch(
+        `${API_URL}/evaluate`,
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body: JSON.stringify({
+            questions: currentQuiz.questions,
+            answers: answers
+          })
+        }
+      );
+
+
+      const data = await response.json();
+
+
+      if (!response.ok) {
+        throw new Error(
+          data.error || "Evaluation failed"
+        );
+      }
+
+
+      displayResults(data);
+
+
+      status.innerHTML =
+        "✅ Assessment completed!";
+
+    } catch (error) {
+
+      console.error(error);
+
+      status.innerHTML =
+        `<span class="error">❌ ${error.message}</span>`;
+    }
+  }
+
+
+  // =====================================================
+  // DISPLAY RESULTS
+  // =====================================================
+
+  function displayResults(data) {
+
+    const resultBox =
+      document.getElementById("resultBox");
+
+    resultBox.style.display = "block";
+
+
+    const score = data.score;
+
+    document.getElementById("score").innerHTML = `
+      <div class="result">
+        <h2>
+          Score: ${score.obtainedMarks}/${score.totalMarks}
+        </h2>
+
+        <h3>
+          Percentage: ${score.percentage}%
+        </h3>
+      </div>
+    `;
+
+
+    const report =
+      data.performanceAnalysis;
+
+
+    fillList(
+      "strongAreas",
+      report.strongAreas
+    );
+
+    fillList(
+      "weakAreas",
+      report.weakAreas
+    );
+
+    fillList(
+      "recommendations",
+      report.recommendations
+    );
+
+    fillList(
+      "revisionTopics",
+      report.revisionTopics
+    );
+
+    document.getElementById("nextStep").innerText =
+      report.nextStep || "No next step suggested.";
+
+
+    fillList(
+      "retestConcepts",
+      report.retestConcepts
+    );
+
+
+    window.scrollTo({
+      top: resultBox.offsetTop,
+      behavior: "smooth"
+    });
+  }
+
+
+  // =====================================================
+  // HELPER
+  // =====================================================
+
+  function fillList(elementId, items) {
+
+    const element =
+      document.getElementById(elementId);
+
+    element.innerHTML = "";
+
+    if (!items || items.length === 0) {
+
+      element.innerHTML =
+        "<li>None identified.</li>";
+
+      return;
+    }
+
+    items.forEach(item => {
+
+      const li =
+        document.createElement("li");
+
+      li.innerText = item;
+
+      element.appendChild(li);
+
+    });
+  }
+
+
+  function escapeHtml(text) {
+
+    const div =
+      document.createElement("div");
+
+    div.innerText = text;
+
+    return div.innerHTML;
+  }
+
+</script>
+
+</body>
+</html>
+
