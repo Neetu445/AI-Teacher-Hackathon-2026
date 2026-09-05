@@ -118,11 +118,11 @@ ai-teacher/
 
 ## Deploy
 
-- **Render**: `render.yaml` included — New Web Service from repo, done.
-- **Docker**: `docker build -t ai-teach . && docker run -p 8000:8000 ai-teach`
-- **Any VM**: `pip install -r requirements.txt && python -m uvicorn app.main:app --host 0.0.0.0 --port 8000`
-- Single worker only (sessions are in-memory); mount `/app/data` for persistent learner profiles on platforms with ephemeral disks.
+- **Vercel:** Live demo: https://ai-teacher-hackathon-2026-eosin.vercel.app/
+- **Docker:** `docker build -t ai-teach . && docker run -p 8000:8000 ai-teach`
+- **Local:** `pip install -r requirements.txt && python -m uvicorn app.main:app --host 0.0.0.0 --port 8000`
 
+- 
 ## Environment variables
 
 | Variable | Purpose | Required? |
