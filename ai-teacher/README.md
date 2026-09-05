@@ -10,15 +10,15 @@ Built for the *“AI Teacher”* challenge: a working prototype that demonstrate
 **Understanding → Planning → Explanation → Questioning → Evaluation → Adaptation**,
 not a Q&A bot and not a talking-head reading a script.
 
-![AI Guru classroom](docs/classroom.png)
+![AI-TEACH classroom](docs/light-03-class.png)
 
 | Setup | Adaptive remediation | MCQ interaction |
 |---|---|---|
-| ![setup](docs/setup.png) | ![misconception](docs/misconception.png) | ![mcq](docs/mcq.png) |
+| ![setup](docs/light-02-filled.png) | ![adaptive banner](docs/light-05-adaptive.png) | ![question](docs/light-04-question.png) |
 
 | Hindi lesson | Learning report |
 |---|---|
-| ![hindi](docs/hindi.png) | ![report](docs/report.png) |
+| ![report](docs/light-06-report.png) | ![landing](docs/light-01-landing.png) |
 
 ---
 
@@ -261,3 +261,28 @@ again, (3) uses a **different** analogy, (4) asks a **new** question, (5) re-eva
 (6) logs it in your profile and schedules revision. That closed loop — plan, teach,
 question, diagnose, remediate, reassess, remember — is what separates an AI *teacher*
 from an AI *answerer*, and it runs end-to-end here, on a laptop, with zero API keys.
+
+---
+
+## Why this wins — judge's rubric map
+
+| Challenge requirement | Where it lives | Judge sees it |
+|---|---|---|
+| Understand any topic / uploaded material | `app/ingest.py` + `app/rag.py` (PDF/DOCX/PPTX/TXT parsing → retrieval-grounded lessons) | Drop a PDF on the landing page |
+| Structured lesson | `app/tutor.py › LessonPlanner` (segments + quiz + study plans; teacher never free-styles) | Session opens with a plan summary |
+| Adapt to learner level & time | Grade→level mapping, `minutes`→segment count in planner; LLM-written or offline plan | Set Grade 5 vs 12, 5 min vs 60 min |
+| Human-like avatar & natural voice | `web/js/avatar.js` (lip-synced, expressive) + `app/tts.py` / browser TTS | Classroom screen, live |
+| Visual explanations | `web/js/whiteboard.js` — circuits, graphs, triangles, timelines, code, equations | Whiteboard right of the avatar |
+| Multiple languages | 12 languages; full Hindi UI + lesson; honest visible fallback without a key | `EN ⇄ हिं` button mid-lesson |
+| Engaging **video** output | `web/js/recorder.js` — one-click export of the whole class to `.webm` | Record button in class |
+| Ask questions mid-lesson | Tutor pauses per segment; MCQ + free text + push-to-talk (STT) | "Your turn!" prompts |
+| Evaluate responses | LLM grading, else rule-based matcher + RAG context (`tutor.evaluate`) | ✅ / 🟡 / 🔁 verdicts in chat |
+| Detect misconceptions & gaps | Misconception patterns in packs + LLM labels; logged in learner model | Amber **adaptive banner** |
+| Re-explain when struggling | misconception → reteach **with a new analogy** → retest (`tag`-driven beats) | Banner + fresh explanation |
+| Change difficulty on performance | easier retest after a miss; challenge step after clean streaks; topics deferred vs retested by policy | Adaptive journey in report |
+| Follow-up questions in context | `POST /ask` answered with lesson + RAG context, lesson resumes | "Ask a doubt" mode toggle |
+| Final assessment & quiz | Per-lesson quiz with MCQs, scored | Quiz beats at lesson end |
+| Feedback + next steps | Report: score, mastery bars, weak/strong, misconceptions fixed, adaptive-action trail, recommendations, learning path; **Revise my weak topics** launches a new targeted lesson; profile persists across sessions | Report screen + 📊 drawer |
+| Not a chatbot | The engine drives: plans, asks, waits, adapts, re-tests — student never has to prompt it | Watch one full lesson |
+
+**Demo script:** see [DEMO.md](DEMO.md).

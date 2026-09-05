@@ -21,18 +21,18 @@ class Avatar {
 
     // ---------------- classroom scene
     const g = ctx.createLinearGradient(x, y, x, y + h);
-    g.addColorStop(0, "#2a3560"); g.addColorStop(1, "#131a30");
+    g.addColorStop(0, "#eef1fb"); g.addColorStop(1, "#dde4f7");
     ctx.fillStyle = g; ctx.fillRect(x, y, w, h);
     // chalkboard
     ctx.save();
     ctx.fillStyle = "#1e4a40";
     roundRect(ctx, x + 16, y + 16, w - 32, h * 0.30, 10); ctx.fill();
     ctx.strokeStyle = "#8a6b3f"; ctx.lineWidth = 5; ctx.stroke();
-    ctx.fillStyle = "rgba(255,255,255,.55)"; ctx.font = "italic " + F(15);
+    ctx.fillStyle = "rgba(255,255,255,.55)"; ctx.font = "italic "+ F(15);
     ctx.fillText("V = I × R", x + 40, y + 52);
     ctx.strokeStyle = "rgba(255,255,255,.35)"; ctx.lineWidth = 1.5;
     ctx.beginPath(); ctx.moveTo(x + 36, y + 60); ctx.lineTo(x + 108, y + 60); ctx.stroke();
-    ctx.fillStyle = "rgba(255,255,255,.4)"; ctx.font = "italic " + F(13);
+    ctx.fillStyle = "rgba(255,255,255,.4)"; ctx.font = "italic "+ F(13);
     ctx.fillText("learning = fun!", x + w - 150, y + 52);
     // chalk tray
     ctx.fillStyle = "#8a6b3f"; ctx.fillRect(x + 16, y + 16 + h * 0.30 + 4, w - 32, 6);
@@ -224,13 +224,13 @@ class Avatar {
 
     // ---- name plate
     const name = prof ? "Prof. Sharma · AI Teacher" : "Priya · AI Teacher";
-    ctx.fillStyle = "rgba(12,17,32,.85)";
+    ctx.fillStyle = "rgba(79,70,229,.92)";
     roundRect(ctx, cx - w * 0.34, y + h - 42, w * 0.68, 30, 15); ctx.fill();
-    ctx.strokeStyle = "rgba(255,183,3,.4)"; ctx.lineWidth = 1.2; ctx.stroke();
-    ctx.fillStyle = "#ffd566"; ctx.font = "600 " + F(13); ctx.textAlign = "center";
-    ctx.fillText(name + (this.speaking ? " • speaking" : ""), cx, y + h - 22);
+    ctx.strokeStyle = "rgba(255,255,255,.5)"; ctx.lineWidth = 1.2; ctx.stroke();
+    ctx.fillStyle = "#ffffff"; ctx.font = "600 "+ F(13); ctx.textAlign = "center";
+    ctx.fillText(name + (this.speaking ? "• speaking" : ""), cx, y + h - 22);
     if (this.speaking) {   // sound bars
-      ctx.fillStyle = "#4cc9f0";
+      ctx.fillStyle = "#a5b4fc";
       for (let i = 0; i < 3; i++) {
         const hh = 3 + Math.abs(Math.sin(t * 7 + i)) * 9;
         ctx.fillRect(cx + w * 0.68 - 34 + i * 6 - 12, y + h - 22 - hh / 2, 4, hh);

@@ -135,6 +135,7 @@ def start_session(req: StartSessionRequest):
             "days": len(plan.get("days", [])) if plan["mode"] == "study_plan" else 0,
             "grounded": plan.get("grounded"), "path": plan.get("path"),
             "minutes": plan.get("minutes"), "language": plan.get("language"),
+            "language_note": plan.get("language_note"),
         },
         "first_beat": first,
     }

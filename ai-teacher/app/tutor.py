@@ -60,6 +60,18 @@ class LessonPlanner:
         plan["minutes"] = minutes
         plan["language"] = prof["language"]
         plan["level"] = prof["level"]
+        # graceful, *visible* fallback: the offline engine only teaches in
+        # languages it has content for — never silently switch to English.
+        info = pedagogy.LANG_INFO.get(plan["language"], {})
+        if plan.get("engine") != "llm" and not info.get("offline"):
+            requested = plan["language"]
+            plan["language"] = "hi" if requested in ("mr", "pa", "bn", "gu", "kn") else "en"
+            names = {"en": "English", "hi": "Hindi", "hinglish": "Hinglish"}
+            plan["language_note"] = (
+                f"{info.get('name', requested)} needs an AI key for full lessons — "
+                f"teaching in {names[plan['language']]} for now."
+            )
+            prof["language"] = plan["language"]
         return plan
 
     # -- LLM lesson ---------------------------------------------------

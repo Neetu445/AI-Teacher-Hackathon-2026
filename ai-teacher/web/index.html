@@ -4,223 +4,223 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI-TEACH — Your Adaptive AI Teacher</title>
-<link rel="stylesheet" href="css/style.css">
+<meta name="description" content="AI-TEACH is an adaptive AI tutoring platform: it plans lessons from your material, teaches with a live whiteboard and voice, detects misconceptions, re-teaches with fresh analogies, and re-tests you.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234f46e5'/%3E%3Ctext x='16' y='22' font-size='16' font-weight='bold' font-family='sans-serif' fill='white' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css?v=3">
 </head>
 <body>
 
 <nav class="nav">
-  <div class="brand">AI<span>-</span>TEACH <small data-i18n="brand_tag">Your Adaptive AI Teacher</small></div>
-  <div class="nav-right">
-    <button id="drawerBtn" class="ghost-btn" data-i18n="profile_btn">📊 My learning</button>
-  </div>
+ <div class="brand">AI<span>-</span>TEACH <small data-i18n="brand_tag">Your Adaptive AI Teacher</small></div>
+ <div class="nav-right">
+ <span id="engineBadge" class="engine-badge"></span>
+ <button id="drawerBtn" class="ghost-btn" data-i18n="profile_btn">My learning</button>
+ </div>
 </nav>
 
 <!-- ══════════════ LANDING ══════════════ -->
 <section id="view-landing" class="view active">
-  <div class="landing-two">
-    <div class="landing-form">
-      <h1 data-i18n="hero_title">Learn anything the way a <em>real teacher</em> would teach you.</h1>
-      <p class="sub" data-i18n="hero_sub">Learn at your pace. Get taught differently when you struggle. Upload your study material or name a topic — your AI teacher plans the lesson, explains with visuals and voice, asks questions, detects your misconceptions, adapts, and re-tests you.</p>
+ <div class="landing-two">
+ <div class="landing-form">
+ <h1 data-i18n="hero_title">Learn anything the way a <em>real teacher</em> would teach you.</h1>
+ <p class="sub" data-i18n="hero_sub">Learn at your pace. Get taught differently when you struggle. Upload your study material or name a topic — your AI teacher plans the lesson, explains with visuals and voice, asks questions, detects your misconceptions, adapts, and re-tests you.</p>
 
-      <div class="tabs">
-        <button class="tab active" data-view="upload" type="button" data-i18n="tab_upload">📄 Upload material</button>
-        <button class="tab" data-view="topic" type="button" data-i18n="tab_topic">💡 Just a topic</button>
-      </div>
+ <div class="tabs">
+ <button class="tab active" data-view="upload" type="button" data-i18n="tab_upload"> Upload material</button>
+ <button class="tab" data-view="topic" type="button" data-i18n="tab_topic"> Just a topic</button>
+ </div>
 
-      <!-- upload -->
-      <div id="tab-upload">
-        <div class="dropzone" id="dropzone">
-          <span data-i18n="dz_title"><b>Drop your book, notes, PDF, slides…</b></span>
-          <small data-i18n="dz_sub">PDF · DOCX · PPTX · TXT · MD · Code notes</small>
-          <input type="file" id="fileInput" hidden>
-        </div>
-        <div id="docInfo" class="doc-info hidden">
-          <div class="doc-name"></div>
-          <label data-i18n="doc_section">Chapter / section to teach</label>
-          <select id="sectionSelect"></select>
-        </div>
-      </div>
+ <!-- upload -->
+ <div id="tab-upload">
+ <div class="dropzone" id="dropzone"><span data-i18n="dz_title"><b>Drop your book, notes, PDF, slides…</b></span>
+ <small data-i18n="dz_sub">PDF · DOCX · PPTX · TXT · MD · Code notes</small>
+ <input type="file" id="fileInput" hidden>
+ </div>
+ <div id="docInfo" class="doc-info hidden">
+ <div class="doc-name"></div>
+ <label data-i18n="doc_section">Chapter / section to teach</label>
+ <select id="sectionSelect"></select>
+ </div>
+ </div>
 
-      <!-- topic -->
-      <div id="tab-topic" class="hidden">
-        <input id="topicInput" type="text" placeholder="Photosynthesis, Ohm's Law, Python loops, French Revolution…">
-        <div class="chips row">
-          <button class="chip-light" id="chip-ohm" type="button" data-i18n="chip_ohm">⚡ Ohm's Law</button>
-          <button class="chip-light" id="chip-photo" type="button" data-i18n="chip_photo">🌿 Photosynthesis</button>
-          <button class="chip-light" id="chip-newton" type="button" data-i18n="chip_newton">🍎 Newton's Laws</button>
-          <button class="chip-light" id="chip-ml" type="button" data-i18n="chip_ml">🤖 Machine learning (7-day plan)</button>
-        </div>
-        <p class="tiny muted" data-i18n="chip_hint">Try the classic trap: start Ohm's Law, and when asked about resistance, answer “current increases”. Watch the teacher detect the misconception and re-teach it differently.</p>
-      </div>
+ <!-- topic -->
+ <div id="tab-topic" class="hidden">
+ <input id="topicInput" type="text" placeholder="Photosynthesis, Ohm's Law, Python loops, French Revolution…">
+ <div class="chips row">
+ <button class="chip-light" id="chip-ohm" type="button" data-i18n="chip_ohm"> Ohm's Law</button>
+ <button class="chip-light" id="chip-photo" type="button" data-i18n="chip_photo"> Photosynthesis</button>
+ <button class="chip-light" id="chip-newton" type="button" data-i18n="chip_newton"> Newton's Laws</button>
+ <button class="chip-light" id="chip-ml" type="button" data-i18n="chip_ml"> Machine learning (7-day plan)</button>
+ </div>
+ <p class="tiny muted" data-i18n="chip_hint">Try the classic trap: start Ohm's Law, and when asked about resistance, answer “current increases”. Watch the teacher detect the misconception and re-teach it differently.</p>
+ </div>
 
-      <div class="prefs grid2">
-        <label><span data-i18n="lbl_name">Your name <span class='muted'>(optional)</span></span>
-          <input id="nameInput" type="text" placeholder="Aditi" autocomplete="off">
-        </label>
-        <label><span data-i18n="lbl_lang">Teach me in</span>
-          <select id="langSelect">
-            <option value="en">English</option>
-            <option value="hi">Hindi (हिन्दी)</option>
-            <option value="hinglish">Hinglish</option>
-            <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
-            <option value="ta">Tamil (தமிழ்)</option>
-            <option value="te">Telugu (తెలుగు)</option>
-            <option value="bn">Bengali (বাংলা)</option>
-            <option value="mr">Marathi (मराठी)</option>
-            <option value="ne">Nepali (नेपाली)</option>
-            <option value="ur">Urdu (اردو)</option>
-            <option value="ar">Arabic (العربية)</option>
-            <option value="am">Amharic (አማርኛ)</option>
-          </select>
-          <small id="langNote" class="tiny warn hidden" data-i18n="langnote_needs_key">This language needs an OPENAI_API_KEY — offline supports English, Hindi, Hinglish.</small>
-        </label>
-        <label><span data-i18n="lbl_grade">Grade / Class</span>
-          <select id="gradeSelect"></select>
-        </label>
-        <label><span data-i18n="lbl_subject">Subject</span>
-          <select id="subjectSelect">
-            <option value="Science" data-i18n="subj_science">Science</option>
-            <option value="Mathematics" data-i18n="subj_math">Mathematics</option>
-            <option value="Computer Science" data-i18n="subj_cs">Computer Science</option>
-            <option value="Social Science" data-i18n="subj_social">Social Science</option>
-            <option value="English" data-i18n="subj_english">English</option>
-            <option value="General" data-i18n="subj_general">General</option>
-          </select>
-        </label>
-        <label><span data-i18n="lbl_persona">Teacher persona</span>
-          <select id="personaSelect">
-            <option value="priya" data-i18n="persona_priya">Priya (warm & friendly)</option>
-            <option value="prof" data-i18n="persona_prof">Prof. Sharma (formal)</option>
-          </select>
-        </label>
-        <label><span data-i18n="lbl_time">Time available</span>
-          <div class="chips" id="timeChips">
-            <button data-min="5" type="button" data-i18n="time_5">⚡ 5 min</button>
-            <button data-min="20" class="active" type="button" data-i18n="time_20">📚 20 min</button>
-            <button data-min="60" type="button" data-i18n="time_60">🎓 60 min</button>
-            <button data-min="custom" type="button" data-i18n="time_custom">✏️ custom</button>
-            <button data-min="days:7" type="button" data-i18n="time_days">🗓 7-day plan</button>
-          </div>
-          <input id="timeCustom" type="text" class="hidden" data-i18n-ph="ph_custom" placeholder="e.g. 15 minutes, or 10 days">
-        </label>
-        <label><span data-i18n="lbl_style">Teaching style</span>
-          <select id="styleSelect">
-            <option value="conceptual" data-i18n="s_conceptual">Concept-first with analogies</option>
-            <option value="exam" data-i18n="s_exam">Exam preparation</option>
-            <option value="interview" data-i18n="s_interview">Interview practice</option>
-            <option value="story" data-i18n="s_story">Story-based</option>
-          </select>
-        </label>
-      </div>
+ <div class="prefs grid2">
+ <label><span data-i18n="lbl_name">Your name <span class='muted'>(optional)</span></span>
+ <input id="nameInput" type="text" placeholder="Aditi" autocomplete="off">
+ </label>
+ <label><span data-i18n="lbl_lang">Teach me in</span>
+ <select id="langSelect">
+ <option value="en">English</option>
+ <option value="hi">Hindi (हिन्दी)</option>
+ <option value="hinglish">Hinglish</option>
+ <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
+ <option value="ta">Tamil (தமிழ்)</option>
+ <option value="te">Telugu (తెలుగు)</option>
+ <option value="bn">Bengali (বাংলা)</option>
+ <option value="mr">Marathi (मराठी)</option>
+ <option value="ne">Nepali (नेपाली)</option>
+ <option value="ur">Urdu (اردو)</option>
+ <option value="ar">Arabic (العربية)</option>
+ <option value="am">Amharic (አማርኛ)</option>
+ </select>
+ <small id="langNote" class="tiny warn hidden" data-i18n="langnote_needs_key">This language needs an OPENAI_API_KEY — offline supports English, Hindi, Hinglish.</small>
+ </label>
+ <label><span data-i18n="lbl_grade">Grade / Class</span>
+ <select id="gradeSelect"></select>
+ </label>
+ <label><span data-i18n="lbl_subject">Subject</span>
+ <select id="subjectSelect">
+ <option value="Science" data-i18n="subj_science">Science</option>
+ <option value="Mathematics" data-i18n="subj_math">Mathematics</option>
+ <option value="Computer Science" data-i18n="subj_cs">Computer Science</option>
+ <option value="Social Science" data-i18n="subj_social">Social Science</option>
+ <option value="English" data-i18n="subj_english">English</option>
+ <option value="General" data-i18n="subj_general">General</option>
+ </select>
+ </label>
+ <label><span data-i18n="lbl_persona">Teacher persona</span>
+ <select id="personaSelect">
+ <option value="priya" data-i18n="persona_priya">Priya (warm & friendly)</option>
+ <option value="prof" data-i18n="persona_prof">Prof. Sharma (formal)</option>
+ </select>
+ </label>
+ <label><span data-i18n="lbl_time">Time available</span>
+ <div class="chips" id="timeChips">
+ <button data-min="5" type="button" data-i18n="time_5"> 5 min</button>
+ <button data-min="20" class="active" type="button" data-i18n="time_20"> 20 min</button>
+ <button data-min="60" type="button" data-i18n="time_60"> 60 min</button>
+ <button data-min="custom" type="button" data-i18n="time_custom"> custom</button>
+ <button data-min="days:7" type="button" data-i18n="time_days"> 7-day plan</button>
+ </div>
+ <input id="timeCustom" type="text" class="hidden" data-i18n-ph="ph_custom" placeholder="e.g. 15 minutes, or 10 days">
+ </label>
+ <label><span data-i18n="lbl_style">Teaching style</span>
+ <select id="styleSelect">
+ <option value="conceptual" data-i18n="s_conceptual">Concept-first with analogies</option>
+ <option value="exam" data-i18n="s_exam">Exam preparation</option>
+ <option value="interview" data-i18n="s_interview">Interview practice</option>
+ <option value="story" data-i18n="s_story">Story-based</option>
+ </select>
+ </label>
+ </div>
 
-      <button id="startBtn" class="cta" data-i18n="btn_start">Start Learning ▶</button>
-      <div id="startStatus" class="status"></div>
-    </div>
+ <button id="startBtn" class="cta" data-i18n="btn_start">Start Learning </button>
+ <div id="startStatus" class="status"></div>
+ </div>
 
-    <aside class="landing-side">
-      <h3 data-i18n="side_title">What your AI teacher does</h3>
-      <ol>
-        <li data-i18n="side1"><b>Plans</b> a lesson from your material or topic, tuned to your grade &amp; time</li>
-        <li data-i18n="side2"><b>Explains</b> on a live whiteboard — diagrams, equations, timelines, code</li>
-        <li data-i18n="side3"><b>Speaks</b> with a natural voice, in your language</li>
-        <li data-i18n="side4"><b>Asks</b> questions and waits for <em>your</em> answer (type or speak 🎤)</li>
-        <li data-i18n="side5"><b>Detects misconceptions</b>, re-explains with a fresh analogy, re-tests you</li>
-        <li data-i18n="side6"><b>Assesses</b> you and writes a learning report with next steps</li>
-        <li data-i18n="side7">🎥 <b>Record</b> the whole class as a video to revise later</li>
-      </ol>
-    </aside>
-  </div>
+ <aside class="landing-side">
+ <h3 data-i18n="side_title">What your AI teacher does</h3>
+ <ol>
+ <li data-i18n="side1"><b>Plans</b> a lesson from your material or topic, tuned to your grade &amp; time</li>
+ <li data-i18n="side2"><b>Explains</b> on a live whiteboard — diagrams, equations, timelines, code</li>
+ <li data-i18n="side3"><b>Speaks</b> with a natural voice, in your language</li>
+ <li data-i18n="side4"><b>Asks</b> questions and waits for <em>your</em> answer (type or speak )</li>
+ <li data-i18n="side5"><b>Detects misconceptions</b>, re-explains with a fresh analogy, re-tests you</li>
+ <li data-i18n="side6"><b>Assesses</b> you and writes a learning report with next steps</li>
+ <li data-i18n="side7"> <b>Record</b> the whole class as a video to revise later</li>
+ </ol>
+ </aside>
+ </div>
 </section>
 
 <!-- ══════════════ CLASSROOM ══════════════ -->
 <section id="view-class" class="view">
-  <div class="class-wrap">
-    <div class="board">
-      <div class="board-inner">
-        <div class="board-head">
-          <span id="boardTitle">Physics</span>
-          <span id="followRate"></span>
-        </div>
-        <canvas id="classCanvas" width="1024" height="560"></canvas>
-        <span class="board-brand">AI-TEACH</span>
-      </div>
-      <div class="avatarBox">
-        <video id="avatarVideo" muted playsinline></video>
-      </div>
-      <div class="mcq-bar hidden" id="mcqBar"></div>
-    </div>
+ <div class="class-wrap">
+ <div class="board">
+ <div class="board-inner">
+ <div class="board-head"><span id="boardTitle">Physics</span><span id="followRate"></span>
+ </div>
+ <canvas id="classCanvas" width="1024" height="560"></canvas><span class="board-brand">AI-TEACH</span>
+ </div>
+ <div class="avatarBox">
+ <video id="avatarVideo" muted playsinline></video>
+ </div>
+ <div class="mcq-bar hidden" id="mcqBar"></div>
+ </div>
 
-    <div class="panel">
-      <div id="adaptBanner" class="adapt-banner hidden">
-        <div class="ab-head">🧠 <b data-i18n="b_title">Adaptive teaching</b> <span class="ab-live" data-i18n="b_tagline">live</span></div>
-        <div class="ab-notice" id="adaptNotice"></div>
-        <div class="ab-approach" data-i18n="b_approach">💡 New approach: a simpler, real-world analogy</div>
-        <div class="ab-retest" id="adaptRetest" data-i18n="b_retest">🔁 New question — let's see if this makes sense now</div>
-      </div>
+ <div class="panel">
+ <div id="adaptBanner" class="adapt-banner hidden">
+ <div class="ab-head"> <b data-i18n="b_title">Adaptive teaching</b><span class="ab-live" data-i18n="b_tagline">live</span></div>
+ <div class="ab-notice" id="adaptNotice"></div>
+ <div class="ab-approach" data-i18n="b_approach"> New approach: a simpler, real-world analogy</div>
+ <div class="ab-retest" id="adaptRetest" data-i18n="b_retest"> New question — let's see if this makes sense now</div>
+ </div>
 
-      <div class="controls">
-        <button id="pauseBtn" type="button" data-i18n="ctl_pause">⏸ Pause</button>
-        <button id="replayBtn" type="button" data-i18n="ctl_replay">🔁 Replay</button>
-        <button id="recordBtn" type="button" data-i18n="ctl_record">⏺ Record</button>
-        <button id="switchLang" class="mini" type="button">EN ⇄ हिं</button>
-        <span class="spacer"></span>
-        <button id="endBtn" class="ghost danger" type="button" data-i18n="ctl_end">⏹ End & report</button>
-      </div>
-      <div class="progress"><div class="fill" id="progressFill"></div></div>
-      <div class="stage-line"><span id="stageLabel"></span></div>
+ <div class="controls">
+ <button id="pauseBtn" type="button" data-i18n="ctl_pause"> Pause</button>
+ <button id="replayBtn" type="button" data-i18n="ctl_replay"> Replay</button>
+ <button id="recordBtn" type="button" data-i18n="ctl_record"> Record</button>
+ <button id="switchLang" class="mini" type="button">EN ⇄ हिं</button><span class="spacer"></span>
+ <button id="endBtn" class="ghost danger" type="button" data-i18n="ctl_end"> End & report</button>
+ </div>
+ <div class="progress"><div class="fill" id="progressFill"></div></div>
+ <div class="stage-line"><span id="stageLabel"></span></div>
 
-      <div class="chat" id="chatLog"></div>
+ <div class="chat" id="chatLog"></div>
 
-      <div class="input-row">
-        <div class="mode-toggle">
-          <button id="modeAnswer" type="button" data-i18n="mode_answer">Answer</button>
-          <button id="modeDoubt" type="button" data-i18n="mode_doubt">Ask a doubt</button>
-        </div>
-        <input id="answerInput" type="text" data-i18n-ph="ph_answer" placeholder="Type your answer… (or press 🎤 and speak)" autocomplete="off">
-        <button id="micBtn" title="Push to talk" type="button">🎤</button>
-        <button id="sendBtn" class="send" type="button">➤</button>
-      </div>
-      <div class="tinyhint" id="inputHint" data-i18n="hint_default">The teacher will pause for questions. Doubts are welcome anytime.</div>
-    </div>
-  </div>
+ <div class="input-row">
+ <div class="mode-toggle">
+ <button id="modeAnswer" type="button" data-i18n="mode_answer">Answer</button>
+ <button id="modeDoubt" type="button" data-i18n="mode_doubt">Ask a doubt</button>
+ </div>
+ <input id="answerInput" type="text" data-i18n-ph="ph_answer" placeholder="Type your answer… (or press and speak)" autocomplete="off">
+   <button id="micBtn" title="Push to talk" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><line x1="12" y1="18" x2="12" y2="22"/></svg></button>
+   <button id="sendBtn" class="send" type="button"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M3 11l18-8-8 18-2.5-7.5z"/></svg></button>
+ </div>
+ <div class="tinyhint" id="inputHint" data-i18n="hint_default">The teacher will pause for questions. Doubts are welcome anytime.</div>
+ </div>
+ </div>
 </section>
 
 <!-- ══════════════ REPORT ══════════════ -->
 <section id="view-report" class="view">
-  <div class="report">
-    <h2><span class="acc">◆</span> <span data-i18n="rep_prefix">Report: </span><span id="repTitle"></span></h2>
+ <div class="report">
+ <h2><span class="acc"></span><span data-i18n="rep_prefix">Report: </span><span id="repTitle"></span></h2>
 
-    <div id="repStats" class="rep-stats"></div>
+ <div id="repStats" class="rep-stats"></div>
 
-    <div class="rsec" id="repJourneySec"><h4 data-i18n="h_journey">⚡ Your adaptive learning journey</h4><div id="repJourney"></div></div>
+ <div class="rsec" id="repJourneySec"><h4 data-i18n="h_journey"> Your adaptive learning journey</h4><div id="repJourney"></div></div>
 
-    <div class="rgrid">
-      <div class="rsec"><h4 data-i18n="h_mastery">Concept mastery</h4><div id="repMastery"></div></div>
-      <div class="rsec"><h4 data-i18n="h_recs">Recommendations</h4><ul id="repRecs"></ul></div>
-    </div>
-    <div class="rgrid">
-      <div class="rsec"><h4 data-i18n="h_path">Your learning path</h4><div id="repPath"></div></div>
-      <div class="rsec"><div id="repTopics"></div></div>
-    </div>
+ <div class="rgrid">
+ <div class="rsec"><h4 data-i18n="h_mastery">Concept mastery</h4><div id="repMastery"></div></div>
+ <div class="rsec"><h4 data-i18n="h_recs">Recommendations</h4><ul id="repRecs"></ul></div>
+ </div>
+ <div class="rgrid">
+ <div class="rsec"><h4 data-i18n="h_path">Your learning path</h4><div id="repPath"></div></div>
+ <div class="rsec"><div id="repTopics"></div></div>
+ </div>
 
-    <div class="rbtns">
-      <button id="newTopicBtn" class="cta" data-i18n="btn_again">🔄 Teach me something new</button>
-      <button id="reviseBtn" data-i18n="btn_revise">📚 Revise my weak topics</button>
-    </div>
-  </div>
+ <div class="rbtns">
+ <button id="newTopicBtn" class="cta" data-i18n="btn_again"> Teach me something new</button>
+ <button id="reviseBtn" data-i18n="btn_revise"> Revise my weak topics</button>
+ </div>
+ </div>
 </section>
 
 <div id="drawer" class="drawer hidden">
-  <div class="drawer-card">
-    <button id="drawerClose" class="x" type="button">✕</button>
-    <h3 data-i18n="drawer_title">📊 My learning profile</h3>
-    <div id="drawerBody"></div>
-  </div>
+ <div class="drawer-card">
+ <button id="drawerClose" class="x" type="button">&times;</button>
+ <h3 data-i18n="drawer_title"> My learning profile</h3>
+ <div id="drawerBody"></div>
+ </div>
 </div>
 
-<script src="js/i18n.js"></script>
-<script src="js/app.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-<script src="js/avatar.js"></script>
+<script src="js/i18n.js?v=3"></script>
+<script src="js/speech.js?v=3"></script>
+<script src="js/whiteboard.js?v=3"></script>
+<script src="js/recorder.js?v=3"></script>
+<script src="js/app.js?v=3"></script>
+<script src="js/avatar.js?v=3"></script>
 </body>
 </html>
