@@ -1,0 +1,34 @@
+Chapter 4: Electricity and Circuits
+
+4.1 Electric Current
+
+Electric current is the rate of flow of electric charge through a conductor. When a battery is connected in a circuit, it pushes electrons through the wires. Current is measured in amperes (A) using an ammeter, which is always connected in series. One ampere equals one coulomb of charge passing a point per second.
+
+4.2 Voltage
+
+Voltage is the electrical potential difference between two points in a circuit. It is the energy given to each unit of charge by the source. Voltage is measured in volts (V) with a voltmeter connected in parallel across the component. A dry cell provides 1.5 volts, while the domestic supply in India is 220 to 240 volts.
+
+4.3 Resistance
+
+Resistance is the property of a conductor to oppose the flow of electric current. It is measured in ohms. Resistance depends on the length of the wire, its thickness, the material, and the temperature. Longer wires have more resistance. Thicker wires have less resistance. Good conductors like copper have low resistance, while nichrome has high resistance and is used in heating elements.
+
+4.4 Ohm's Law
+
+Ohm's law states that the current flowing through a conductor is directly proportional to the potential difference across its ends, provided temperature remains constant. The relation is V = I / R expressed differently: voltage equals current multiplied by resistance. In symbols, I = V/R. This means if resistance doubles while voltage stays the same, the current becomes half.
+
+Example: If a potential difference of 12 V is applied across a resistor of 4 ohms, the current is I = V/R = 12/4 = 3 A.
+
+4.5 Series and Parallel Circuits
+
+In a series circuit, components are connected end to end, so the same current flows through each component. The total resistance is the sum of individual resistances. In a parallel circuit, components are connected across the same two points, so each has the same voltage across it, and the total resistance is less than the smallest individual resistance.
+
+4.6 Heating Effect of Current
+
+When current flows through a resistor, electrical energy converts to heat. The heat produced is proportional to the square of the current, the resistance, and the time: H = I*I*R*t. This principle is used in electric irons, heaters, toasters, and fuses. A fuse melts when too much current passes, breaking the circuit and preventing fire.
+
+Key Definitions
+
+Current: The rate of flow of charge, measured in amperes.
+Voltage: The potential difference between two points, measure of energy per charge.
+Resistance: Opposition to the flow of current, measured in ohms.
+Ohm's Law: Current is directly proportional to voltage at constant temperature.

@@ -1,0 +1,17 @@
+# One-click deploy on Render.com (https://render.com → New → Blueprint)
+services:
+  - type: web
+    name: ai-guru
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /healthz
+    envVars:
+      # Optional: unlock any-topic lessons, LLM grading, and all languages
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: AI_TEACHER_MODEL
+        value: gpt-4o-mini
+      - key: AI_TEACHER_TTS
+        value: none

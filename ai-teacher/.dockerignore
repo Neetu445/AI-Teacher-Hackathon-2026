@@ -1,0 +1,11 @@
+.git
+.github
+.venv
+__pycache__
+**/__pycache__
+*.pyc
+data/uploads/*
+data/profile.json
+scripts/shots
+Dockerfile
+.dockerignore

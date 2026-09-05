@@ -1,0 +1,13 @@
+# AI Guru — backend dependencies
+fastapi>=0.110
+uvicorn>=0.29
+python-multipart>=0.0.9      # file uploads
+
+# learning-material parsing
+pypdf>=4.2                   # PDF
+python-docx>=1.1             # DOCX
+python-pptx>=0.6.23          # PPTX
+
+# --- optional: server-side neural TTS (default is free browser voices) ---
+# gTTS>=2.5                  # pip install gTTS  && AI_TEACHER_TTS=gtts
+# edge-tts>=6.1              # pip install edge-tts && AI_TEACHER_TTS=edge  (best Hindi voices)
