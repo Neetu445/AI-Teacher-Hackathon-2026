@@ -1,4 +1,4 @@
-AI-TEACH — AI GURU
+AI-TEACH 
 AI Teacher Hackathon 2026
 ## Project Documentation & Demonstration Guide
 
