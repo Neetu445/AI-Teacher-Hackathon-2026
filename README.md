@@ -6,21 +6,19 @@
 > **re-teaches with a new analogy**, re-tests you, and writes a report of every adaptive
 > decision — in your language, tuned to your grade and your available time.
 
-![AI-TEACH classroom](docs/02-classroom.png)
+![AI-TEACH classroom](ai-teacher/docs/light-03-class.png)
 
 | Landing & setup | Classroom (avatar + whiteboard + voice) |
 |---|---|
-| ![landing](docs/01-landing.png) | ![classroom](docs/light-03-class.png) |
+| ![landing](ai-teacher/docs/light-01-landing.png) | ![classroom](ai-teacher/docs/light-03-class.png) |
 
 | Adaptive banner in action | Learning report |
 |---|---|
-| ![adaptive](docs/light-05-adaptive.png) | ![report](docs/03-report.png) |
+| ![adaptive](ai-teacher/docs/light-05-adaptive.png) | ![report](ai-teacher/docs/light-06-report.png) |
 
-| Persistent learner profile |
-|---|
-| ![profile](docs/04-profile.png) |
-
----
+| Question / assessment | Learning material upload |
+|---|---|
+| ![question](ai-teacher/docs/light-04-question.png) | ![upload](ai-teacher/docs/light-07-upload.png) |
 
 ## What it does
 
