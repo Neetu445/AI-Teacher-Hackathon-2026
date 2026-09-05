@@ -1,192 +1,138 @@
-AI-TEACH 
-AI Teacher Hackathon 2026
-## Project Documentation & Demonstration Guide
+# AI-TEACH — Your Adaptive AI Teacher
 
-## 1. Project Overview
-AI-TEACH (AI Guru) is an adaptive AI teaching platform designed to provide personalized learning instead of giving every student the same explanation. The system evaluates student responses, identifies areas of difficulty, adapts its teaching strategy, re-teaches concepts using a different explanation or analogy, and validates improvement through a fresh question.
+> **A teacher, not a chatbot.**
+> AI-TEACH plans a structured lesson from any topic or uploaded material, teaches it with a
+> talking avatar, voice and live whiteboard, asks questions, detects misconceptions,
+> **re-teaches with a new analogy**, re-tests you, and writes a report of every adaptive
+> decision — in your language, tuned to your grade and your available time.
 
-## 2. Core Learning Loop
-Understand → Explain → Assess → Detect Difficulty → Adapt → Re-teach → Re-test → Track Progress
-The key innovation is that the system does not only identify that a student is wrong; it changes how it teaches based on the student's learning response.
+![AI-TEACH classroom](docs/02-classroom.png)
 
-## 3. Key Features
-Personalized AI teaching based on learner level, topic and preferences.
-Adaptive explanations when the student struggles.
-Assessment and answer evaluation.
-Weak-concept and misconception detection.
-Re-teaching using alternative explanations or analogies.
-Fresh validation questions after re-teaching.
-Learning progress and report generation.
-Topic-based learning and learning-material upload.
-RAG/knowledge grounding using TF-IDF retrieval.
-English, Hindi and Hinglish support.
-Animated AI teacher/avatar and visual classroom.
-Voice interaction using browser speech capabilities.
-Browser-based lesson recording.
- 
- ## 4. Technology Stack
-Area
-Technology
-Backend
-Python, FastAPI
-Frontend
-HTML, CSS, JavaScript
-AI
-Adaptive tutoring logic + optional OpenAI-compatible LLM
-RAG
-TF-IDF based retrieval
-Document Processing
-PDF, DOCX, PPTX, TXT/Markdown
-Speech
-Browser Speech APIs / optional TTS
-Deployment
-Docker / Render-compatible configuration
+| Landing & setup | Classroom (avatar + whiteboard + voice) |
+|---|---|
+| ![landing](docs/01-landing.png) | ![classroom](docs/light-03-class.png) |
 
-## 5. System Architecture
-Student → FastAPI API → Material Ingestion / RAG / Lesson Planner → Adaptive Tutor Session → Explain → Question → Evaluate → Adapt or Extend → Re-test → Progress / Report
+| Adaptive banner in action | Learning report |
+|---|---|
+| ![adaptive](docs/light-05-adaptive.png) | ![report](docs/03-report.png) |
 
+| Persistent learner profile |
+|---|
+| ![profile](docs/04-profile.png) |
 
-## 6. Adaptive Teaching Flow
-Student begins a lesson.
-AI teacher explains the selected concept.
-The system asks a question.
-Student submits an answer.
-The answer is evaluated.
-If correct, the lesson can continue or extend the concept.
-If incorrect, the system identifies the likely difficulty or misconception.
-The teacher provides targeted feedback and changes the explanation strategy.
-A fresh validation question is presented.
-The new result updates the learner's mastery/progress state.
-The session can finish with a learning report.
+---
 
-## 7. RAG / Learning Material Flow
-Upload Material → Extract Text → Create Chunks → Build TF-IDF Index → Retrieve Relevant Content → Ground Lesson, Questions and Doubt Answers
-The current implementation uses lightweight in-memory TF-IDF retrieval so the project can run without requiring an external vector database.
+## What it does
 
-## 8. Project Structure
-AI_TEACH-2026/
-└── ai-teacher/
-    ├── app/
-    │   ├── main.py
-    │   ├── tutor.py
-    │   ├── pedagogy.py
-    │   ├── rag.py
-    │   ├── ingest.py
-    │   ├── profile.py
-    │   ├── models.py
-    │   ├── llm.py
-    │   ├── tts.py
-    │   └── config.py
-    ├── web/
-    │   ├── index.html
-    │   ├── css/style.css
-    │   └── js/
-    │       ├── app.js
-    │       ├── avatar.js
-    │       ├── whiteboard.js
-    │       ├── i18n.js
-    │       ├── speech.js
-    │       └── recorder.js
-    ├── data/
-    ├── samples/
-    ├── docs/
-    ├── scripts/
-    ├── requirements.txt
-    ├── Dockerfile
-    ├── Procfile
-    ├── render.yaml
-    └── README.md
-## 9. How to Run
-1. Clone the repository:
-git clone https://github.com/Neetu445/AI-Teacher-Hackathon-2026.git
-2. Enter the application folder:
-cd AI-Teacher-Hackathon-2026/ai-teacher
-3. Install dependencies:
+### Task 1 — AI Teaching video
+- **Understands any input**: paste a topic, or upload a PDF / DOCX / PPTX / TXT / notes — the material is parsed, indexed (RAG) and the lesson is *grounded in your content*.
+- **Structured lesson, not free-style chat**: every session starts with a plan — concept segments + quiz + (for long horizons) a multi-day study plan.
+- **Adapted to the learner**: Grade/Class → difficulty level (beginner/intermediate/advanced), and your available time → lesson length. 5-minute sprint or 7-day plan.
+- **Human-like teacher**: animated avatar with lip-sync, expressions and a natural voice (server TTS or browser voices), explaining on a live whiteboard — diagrams, equations, timelines, code, graphs.
+- **Multilingual**: 12 languages. Full Hindi teaching **and full Hindi UI**. Honest, visible fallback when a language needs an AI key.
+- **Delivered as video**: one-click **Record** exports the whole class (avatar + board + captions + voice) to a downloadable `.webm`.
+
+### Task 2 — Interactive & adaptive
+- **Asks and waits**: the teacher pauses per concept — free text, multiple choice, or push-to-talk (speech recognition).
+- **Evaluates answers**: LLM grading, or rule-based + RAG-context grading offline.
+- **Detects misconceptions by name**: classic traps (e.g. "more resistance → more current") are caught and labeled.
+- **Re-explains differently**: misconception → visible **adaptive banner** → reteach with a *new* analogy → **fresh retest question**.
+- **Changes difficulty**: wrong answers trigger easier retests; clean streaks raise challenge; hopeless topics are rescheduled for revision instead of blocking.
+- **Answers doubts** mid-lesson with full context, then resumes the plan.
+- **Final assessment + report**: quiz, score, concept-mastery bars, strong/weak areas, misconceptions found & fixed, and the complete **adaptive journey** (what was retaught and whether you improved), plus next-step recommendations and a one-click **"Revise my weak topics"** lesson.
+- **Learner profile persists** across sessions (mastery over time, session history).
+
+---
+
+## Quick start
+
+```bash
+git clone https://github.com/<you>/ai-teacher.git
+cd ai-teacher
 pip install -r requirements.txt
-4. Start the server:
-uvicorn app.main:app --reload --port 8000
-5. Open in a browser:
-http://localhost:8000
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+# or simply: ./run.sh
+```
 
+Open **http://localhost:8000** in your browser (don't open the HTML file directly — the backend must be running).
 
-## 10. Environment Configuration
-Optional AI configuration can be supplied through a .env file:
-OPENAI_API_KEY=
-OPENAI_BASE_URL=https://api.openai.com/v1
-AI_TEACHER_MODEL=gpt-4o-mini
-AI_TEACHER_TTS=none
-Never commit a real API key to GitHub.
+### Optional: full AI quality
+```bash
+export OPENAI_API_KEY=sk-...
+```
+With a key, lessons/questions/grading are LLM-written and all 12 languages are fully supported.
+**Without a key the app still works end-to-end** via the built-in offline pedagogy engine
+(English / Hindi / Hinglish + curated topic packs + document-grounded lessons).
 
+---
 
-## 11. Recommended Hackathon Demonstration
-Open the AI-TEACH classroom.
-Select a simple topic such as Plants or Ohm's Law.
-Select the learner level and preferred language.
-Start the lesson and show the AI teacher explaining the concept.
-When a question appears, intentionally provide an incorrect answer.
-Show the evaluation/difficulty response.
-Show the teacher changing its explanation or using another analogy.
-Answer the fresh validation question correctly.
-Show the updated learning progress/report.
-Optionally demonstrate Hindi/English switching and material upload.
-12. Strongest Demo Moment
-Wrong Answer → Difficulty/Misconception → Adaptive Explanation → Fresh Question → Correct Answer → Improvement
-This sequence should be the center of the video because it demonstrates the difference between a normal chatbot and an adaptive teacher.
-13. API Overview
-Method
-Endpoint
-Purpose
-GET
-/api/config
-App capabilities, languages and personas
-POST
-/api/upload
-Upload and parse learning material
-GET
-/api/docs/{id}
-Get document information
-POST
-/api/sessions
-Start a learning session
-POST
-/api/sessions/{id}/next
-Get the next teaching step
-POST
-/api/sessions/{id}/answer
-Submit/evaluate an answer
-POST
-/api/sessions/{id}/ask
-Ask a learning doubt
-POST
-/api/sessions/{id}/language
-Change teaching language
-GET
-/api/sessions/{id}
-Get session state
-GET
-/api/sessions/{id}/report
-Generate learning report
-GET
-/api/profile
-Get learner profile/mastery
+## 4-minute judge demo
 
- ## 14. Privacy & Real-World Considerations
-The prototype uses local learner-profile persistence. For production deployment, student data should be protected with authentication, authorization, encryption, appropriate consent and privacy controls. Sensitive student information should not be used in a public demo environment.
+See **[DEMO.md](DEMO.md)** — a scripted walkthrough that hits every rubric point:
+topic → plan → avatar lesson → **intentionally wrong answer → adaptive banner → re-teach → retest** →
+mid-lesson `EN ⇄ हिं` switch → report with the adaptive journey → learner profile.
 
+---
 
-## 15. Future Scope
-Embedding-based RAG and vector databases.
-Larger curriculum and content libraries.
-Teacher and administrator dashboards.
-Multi-student classroom analytics.
-Knowledge-tracing and stronger learner models.
-Improved speech and multimodal learning analysis.
-Mobile applications and LMS integration.
-Privacy-preserving analytics.
+## How it works
 
-## 17. Repository & Demo##
-GitHub: https://github.com/Neetu445/AI-Teacher-Hackathon-2026
-Demo Video: AI-TEACH Hackathon Demonstration — 2026
+```
+┌────────────────────────────┐        REST API         ┌──────────────────────────┐
+│  web/ (vanilla JS, canvas) │  ◄──────────────────►  │  FastAPI  app/main.py    │
+│  · landing/setup           │   /api/sessions        │  · tutor.py — planner +  │
+│  · classroom loop          │   /next /answer /ask   │    adaptive lesson engine│
+│  · whiteboard + avatar     │   /language /report    │  · pedagogy.py — packs,  │
+│  · recorder (video export) │   /upload (RAG ingest) │    templates, languages  │
+│  · i18n (EN/HI full UI)    │   /profile             │  · rag.py / ingest.py    │
+└────────────────────────────┘                        │  · profile.py — learner  │
+                                                      │    model (persistent)    │
+                                                      └──────────────────────────┘
+```
 
-## 18. One-Line Pitch##
-AI-TEACH doesn't just give students answers — it adapts its teaching until the student understands.
+Every beat the engine emits is a small JSON: `{type, say, board, avatar, tag, progress}` —
+the frontend renders it on the whiteboard, speaks it through the avatar, and uses
+**tags** (`misconception`, `reteach`, `retest`, `improved`, `praise`) to drive the adaptive UI.
+
+## Project structure
+
+```
+ai-teacher/
+├── app/
+│   ├── main.py        # FastAPI routes (sessions, answers, ask, language, report, upload, profile, tts)
+│   ├── tutor.py       # LessonPlanner + TutorSession — the adaptive teaching engine
+│   ├── pedagogy.py    # lesson templates, topic packs (Offline), 12-language registry
+│   ├── rag.py         # chunking + retrieval over uploaded material
+│   ├── ingest.py      # PDF/DOCX/PPTX/TXT/code parsing
+│   ├── profile.py     # persistent learner model (mastery, history)
+│   ├── llm.py         # LLM integration (optional, OPENAI_API_KEY)
+│   └── tts.py         # server-side speech (optional)
+├── web/               # frontend (no build step — vanilla HTML/CSS/JS)
+│   ├── index.html
+│   ├── css/style.css  # light educational theme
+│   └── js/            # app, whiteboard, avatar, speech, recorder, i18n
+├── docs/              # screenshots (real captures)
+├── samples/           # sample notes to try the upload flow
+├── DEMO.md            # judge demo script
+├── run.sh             # one-command setup + launch
+├── Procfile / Dockerfile / render.yaml   # deploy targets
+└── requirements.txt
+```
+
+## Deploy
+
+- **Render**: `render.yaml` included — New Web Service from repo, done.
+- **Docker**: `docker build -t ai-teach . && docker run -p 8000:8000 ai-teach`
+- **Any VM**: `pip install -r requirements.txt && python -m uvicorn app.main:app --host 0.0.0.0 --port 8000`
+- Single worker only (sessions are in-memory); mount `/app/data` for persistent learner profiles on platforms with ephemeral disks.
+
+## Environment variables
+
+| Variable | Purpose | Required? |
+|---|---|---|
+| `OPENAI_API_KEY` | LLM-written lessons/grading + all 12 languages | No — offline engine covers EN/HI/Hinglish |
+| `PORT` | Server port (default 8000) | No |
+
+---
+
+Built for the **"Build the AI Teacher of the Future"** hackathon — because a teacher doesn't
+wait for questions; it plans, explains, asks, adapts, and makes sure you learned.
